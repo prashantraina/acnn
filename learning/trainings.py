@@ -1,7 +1,7 @@
 # system modules
 import os
 import time
-import cPickle
+import pickle
 import logging
 
 # numerical modules
@@ -45,7 +45,7 @@ def train_class(ds, paths, funcs, cla, updates, param_arch, param_cost, param_up
     grad_norm_test_avg = []
     acc_test_avg = []
 
-    for i_ in xrange(param_train['n_epochs']):
+    for i_ in range(param_train['n_epochs']):
 
         if 'start_from_epoch' in param_train:
             i = i_ + param_train['start_from_epoch']
@@ -105,13 +105,13 @@ def train_class(ds, paths, funcs, cla, updates, param_arch, param_cost, param_up
                 name_dump = "%s/epoch=%04d.pkl" % (paths['pkls'], i + 1)
                 keys_net = LL.get_all_params(cla)
                 values_net = LL.get_all_param_values(cla, trainable=False)
-                keys_updates = [k for k in updates.keys()]
-                values_updates = [k.get_value() for k in updates.keys()]
+                keys_updates = [k for k in list(updates.keys())]
+                values_updates = [k.get_value() for k in list(updates.keys())]
                 tmp = [paths, param_arch, param_cost, param_updates, param_train,
                        cost_train_avg, acc_train_avg, cost_test_avg, acc_test_avg,
                        keys_net, values_net, keys_updates, values_updates]
                 with open(name_dump, 'wb') as f:
-                    cPickle.dump(tmp, f)
+                    pickle.dump(tmp, f)
             
         if param_train['flag_save_preds']:
             if ((i + 1) % param_train['freq_save_preds']) == 0:

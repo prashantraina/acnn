@@ -2,10 +2,10 @@
 import os
 import numpy as np
 # personal modules
-import splittings
-from datasets import dataset_class
-import models
-import trainings
+from . import splittings
+from .datasets import dataset_class
+from . import models
+from . import trainings
 
 # ------------------------------------------------------------------------------------------------- editable parameters
 # path to the folder containing the code:
@@ -77,9 +77,9 @@ ds = dataset_class(os.path.join(paths['exp'], 'files_train.txt'),
 # quick sanity check
 print('\n[i] quick sanity check:')
 for item in ds.train_iter():
-    print '[i] desc:   min = %e, max = %e' % (item[0].min(), item[0].max())
-    print '[i] patch:  min = %e, max = %e' % (item[1].min(), item[1].max())
-    print '[i] labels: min = %e, max = %e' % (item[2].min(), item[2].max())
+    print('[i] desc:   min = %e, max = %e' % (item[0].min(), item[0].max()))
+    print('[i] patch:  min = %e, max = %e' % (item[1].min(), item[1].max()))
+    print('[i] labels: min = %e, max = %e' % (item[2].min(), item[2].max()))
     break
 
 # computes the model

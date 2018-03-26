@@ -21,7 +21,7 @@ def load_matlab_file(path_file, name_field):
     db = h5py.File(path_file, 'r')
     ds = db[name_field]
     try:
-        if 'ir' in ds.keys():
+        if 'ir' in list(ds.keys()):
             data = np.asarray(ds['data'])
             ir = np.asarray(ds['ir'])
             jc = np.asarray(ds['jc'])
@@ -67,53 +67,53 @@ class dataset_class(object):
         
         # loading the descriptors
         self.descs_train = []
-        print("[i] loading train descs... "),
+        print(("[i] loading train descs... "), end=' ')
         tic = time.time()
         for name in self.names_train:
             tmp = load_matlab_file(os.path.join(self.path_descs, name), 'desc')
             self.descs_train.append(tmp.astype(np.float32))
-        print("%02.2fs" % (time.time() - tic))
+        print(("%02.2fs" % (time.time() - tic)))
         self.descs_test = []
-        print("[i] loading test  descs... "),
+        print(("[i] loading test  descs... "), end=' ')
         tic = time.time()
         for name in self.names_test:
             tmp = load_matlab_file(os.path.join(self.path_descs, name), 'desc')
             self.descs_test.append(tmp.astype(np.float32))
-        print("%02.2fs" % (time.time() - tic))
+        print(("%02.2fs" % (time.time() - tic)))
         
         # loading the patch operators
         self.patch_ops_train = []
-        print("[i] loading train patch operators... "),
+        print(("[i] loading train patch operators... "), end=' ')
         tic = time.time()
         for name in self.names_train:
             M = load_matlab_file(os.path.join(self.path_patch_ops, name), 'M')
             self.patch_ops_train.append(M.astype(np.float32))
-        print("%02.2fs" % (time.time() - tic))
+        print(("%02.2fs" % (time.time() - tic)))
         self.patch_ops_test = []
-        print("[i] loading test  patch operators... "),
+        print(("[i] loading test  patch operators... "), end=' ')
         tic = time.time()
         for name in self.names_test:
             M = load_matlab_file(os.path.join(self.path_patch_ops, name), 'M')
             self.patch_ops_test.append(M.astype(np.float32))
-        print("%02.2fs" % (time.time() - tic))
+        print(("%02.2fs" % (time.time() - tic)))
         
         # loading the labels
         self.labels_train = []
-        print("[i] loading train labels... "),
+        print(("[i] loading train labels... "), end=' ')
         tic = time.time()
         for name in self.names_train:
             self.labels_train.append(load_labels(os.path.join(self.path_labels, name)))
-        print("%02.2fs" % (time.time() - tic))
+        print(("%02.2fs" % (time.time() - tic)))
         self.labels_test = []
-        print("[i] loading test  labels... "),
+        print(("[i] loading test  labels... "), end=' ')
         tic = time.time()
         for name in self.names_test:
             self.labels_test.append(load_labels(os.path.join(self.path_labels, name)))
-        print("%02.2fs" % (time.time() - tic))
+        print(("%02.2fs" % (time.time() - tic)))
 
     def train_iter(self):
         idxs = np.random.permutation(len(self.names_train))
-        for i in xrange(self.epoch_size):
+        for i in range(self.epoch_size):
             idx = idxs[np.mod(i, len(self.names_train))]
             yield (self.descs_train[idx], self.patch_ops_train[idx], self.labels_train[idx])
     
@@ -124,9 +124,9 @@ class dataset_class(object):
     #         yield (self.descs_train[idx], self.patch_ops_train[idx], self.labels_train[idx])
     
     def train_fwd(self):
-        for idx in xrange(len(self.names_train)):
+        for idx in range(len(self.names_train)):
             yield (self.descs_train[idx], self.patch_ops_train[idx], self.labels_train[idx])
             
     def test_fwd(self):
-        for idx in xrange(len(self.names_test)):
+        for idx in range(len(self.names_test)):
             yield (self.descs_test[idx], self.patch_ops_test[idx], self.labels_test[idx])

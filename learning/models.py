@@ -18,7 +18,7 @@ import lasagne.regularization as LR
 import lasagne.nonlinearities as LN
 
 # 
-import custom_layers as CL
+from . import custom_layers as CL
 
 
 def categorical_crossentropy_stable(predictions, targets):
@@ -232,7 +232,7 @@ def model_class(ds, paths, param_arch, param_cost, param_updates, param_train):
     print(dim_labels)
 
     # architecture definition:
-    print("[i] architecture definition... "),
+    print(("[i] architecture definition... "), end=' ')
     tic = time.time()
     if param_arch['type'] == 0:
         desc, patch_op, cla, net, logger = arch_class_00(dim_desc, dim_labels, param_arch, logger)
@@ -242,10 +242,10 @@ def model_class(ds, paths, param_arch, param_cost, param_updates, param_train):
         desc, patch_op, cla, net, logger = arch_class_02(dim_desc, dim_labels, param_arch, logger)
     else:
         raise Exception('[e] architecture not supported!')
-    print("%02.2fs" % (time.time() - tic))
+    print(("%02.2fs" % (time.time() - tic)))
 
     # cost function definition:
-    print("[i] cost function definition... "),
+    print(("[i] cost function definition... "), end=' ')
     tic = time.time()
     pred = LL.get_output(cla, deterministic=True)  # in case we use dropout
     feat = LL.get_output(net)
@@ -274,10 +274,10 @@ def model_class(ds, paths, param_arch, param_cost, param_updates, param_train):
     # gradient definition
     grad = T.grad(cost, params)
     grad_norm = T.nlinalg.norm(T.concatenate([g.flatten() for g in grad]), 2)
-    print("%02.2fs" % (time.time() - tic))
+    print(("%02.2fs" % (time.time() - tic)))
 
     # updates definition:
-    print("[i] gradient updates definition... "),
+    print(("[i] gradient updates definition... "), end=' ')
     tic = time.time()
     if param_updates['method'] == 'momentum':
         if param_updates.get('learning_rate') is not None:
@@ -321,39 +321,39 @@ def model_class(ds, paths, param_arch, param_cost, param_updates, param_train):
         updates = LU.adam(grad, params, learning_rate, beta1, beta2, epsilon)
     else:
         raise Exception('[e] updates method not supported!')
-    print("%02.2fs" % (time.time() - tic))
+    print(("%02.2fs" % (time.time() - tic)))
 
     # train / test functions:
     funcs = dict()
-    print("[i] compiling function 'train'... "),
+    print(("[i] compiling function 'train'... "), end=' ')
     tic = time.time()
     funcs['train'] = theano.function([desc.input_var, patch_op.input_var, target],
                                      [cost, cost_dataterm, cost_reg, grad_norm, acc],
                                      updates=updates,
                                      allow_input_downcast=True,
                                      on_unused_input='warn')
-    print("%02.2fs" % (time.time() - tic))
-    print("[i] compiling function 'fwd'... "),
+    print(("%02.2fs" % (time.time() - tic)))
+    print(("[i] compiling function 'fwd'... "), end=' ')
     tic = time.time()
     funcs['fwd'] = theano.function([desc.input_var, patch_op.input_var, target], 
                                    [cost, grad_norm, acc],
                                    allow_input_downcast=True,
                                    on_unused_input='ignore')
-    print("%02.2fs" % (time.time() - tic))
-    print("[i] compiling function 'pred'... "),
+    print(("%02.2fs" % (time.time() - tic)))
+    print(("[i] compiling function 'pred'... "), end=' ')
     tic = time.time()
     funcs['pred'] = theano.function([desc.input_var, patch_op.input_var, target], 
                                     [pred],
                                     allow_input_downcast=True,
                                     on_unused_input='ignore')
-    print("%02.2fs" % (time.time() - tic))
-    print("[i] compiling function 'feat'... "),
+    print(("%02.2fs" % (time.time() - tic)))
+    print(("[i] compiling function 'feat'... "), end=' ')
     tic = time.time()
     funcs['feat'] = theano.function([desc.input_var, patch_op.input_var, target], 
                                     [feat],
                                     allow_input_downcast=True,
                                     on_unused_input='ignore')
-    print("%02.2fs" % (time.time() - tic))
+    print(("%02.2fs" % (time.time() - tic)))
     
     # save cost function parameters to a config file
     logger.info('\nCost function parameters:')

@@ -14,7 +14,7 @@ from seaborn import plt as plt
 #%matplotlib inline
 
 #
-import datasets
+from . import datasets
 
 
 def kim_curve(assignment, gt, D, A, th=0.3):

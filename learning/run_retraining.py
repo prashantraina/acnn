@@ -1,13 +1,13 @@
 # modules
 import os
-import cPickle
+import pickle
 import numpy as np
 import lasagne.layers as LL
 
 # personal modules
-from datasets import dataset_class
-import models
-import trainings
+from .datasets import dataset_class
+from . import models
+from . import trainings
 
 # ------------------------------------------------------------------------------------------------- editable parameters
 start_from_epoch = 25
@@ -21,7 +21,7 @@ name_pkl = os.path.join(path_pkls, 'pkls', 'epoch=%04d.pkl' % start_from_epoch)
 with open(name_pkl, 'rb') as f:
     [paths, param_arch, param_cost, param_updates, param_train,
      cost_train_avg, acc_train_avg, cost_test_avg, acc_test_avg,
-     keys_net, values_net, keys_updates, values_updates] = cPickle.load(f)
+     keys_net, values_net, keys_updates, values_updates] = pickle.load(f)
 
 # quick sanity check
 print(keys_net)
@@ -52,7 +52,7 @@ funcs, cla, updates = models.model_class(ds, paths, param_arch, param_cost, para
 LL.set_all_param_values(cla, values_net, trainable=False)
 
 # restore updates values
-for k, v in zip(updates.keys(), values_updates):
+for k, v in zip(list(updates.keys()), values_updates):
     k.set_value(v)
 
 # re-training
